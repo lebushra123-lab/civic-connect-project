@@ -1,0 +1,106 @@
+/* Global Glassmorphic Styles */
+:root {
+	--green: #2ecc71;
+	--green-hover: #27ae60;
+	--green-dark: #0f5132;
+	--white: #ffffff;
+}
+
+html, body, #root {
+	height: 100%;
+}
+
+body {
+	/* neutral white page background (only change requested) */
+	background-color: var(--white);
+	background-image: none;
+	color: var(--green-dark); /* keep global text color -> dark green */
+}
+
+.glass-card {
+	/* dark green boxes with white text for readability */
+	background: var(--green-dark);
+	color: var(--white);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+	border-radius: 12px;
+}
+
+.app-shell {
+	display: flex;
+	min-height: 100vh;
+}
+
+.sidebar {
+	width: 280px;
+	position: sticky;
+	top: 0;
+	align-self: flex-start;
+	height: 100vh;
+	overflow-y: auto;
+	padding: 16px;
+}
+
+.header-blur {
+	background: rgba(255,255,255,0.92);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+.hero-section {
+	background: rgba(255,255,255,0.12);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(255,255,255,0.2);
+	border-radius: 24px;
+	padding: 32px;
+	color: var(--green-dark); /* hero headings and text should be dark green on pastel background */
+}
+
+.stat-badge {
+	border-radius: 50%;
+	width: 56px;
+	height: 56px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--white);
+}
+
+/* Micro-interactions */
+.hover-lift {
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.hover-lift:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+}
+
+.fade-in {
+	animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.route-fade-enter {
+	opacity: 0;
+	transform: translateY(8px);
+}
+.route-fade-enter-active {
+	opacity: 1;
+	transform: translateY(0);
+	transition: opacity 250ms ease, transform 250ms ease;
+}
+.route-fade-exit {
+	opacity: 1;
+}
+.route-fade-exit-active {
+	opacity: 0;
+	transform: translateY(-8px);
+	transition: opacity 200ms ease, transform 200ms ease;
+}
