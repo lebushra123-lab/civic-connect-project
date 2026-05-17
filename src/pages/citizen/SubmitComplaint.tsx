@@ -17,6 +17,8 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
+const API_PREFIX = process.env.REACT_APP_API_PREFIX || '';
+
 const SubmitComplaint: React.FC = () => {
 	const { enqueueSnackbar } = useSnackbar();
 	const { user } = useAuthStore();
@@ -40,14 +42,14 @@ const SubmitComplaint: React.FC = () => {
 
 	const onSubmit = async (values: FormValues) => {
 		if (!user) return;
-		
+
 		let imageUrl = undefined;
 		if (imageFile) {
 			setUploading(true);
 			try {
 				const formData = new FormData();
 				formData.append('image', imageFile);
-				const res = await fetch('/api/upload', { method: 'POST', body: formData });
+				const res = await fetch(`${API_PREFIX}/api/upload`, { method: 'POST', body: formData });
 				if (!res.ok) throw new Error('Upload failed');
 				const data = await res.json();
 				imageUrl = data.url;
