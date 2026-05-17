@@ -1,37 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure multer storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir);
-    },
-    filename: function (req, file, cb) {
-        // Generate a unique filename: timestamp + random number + original extension
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// File filter to accept only images
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-        cb(null, true);
-    } else {
-        cb(new Error('Only image files are allowed!'), false);
-    }
-};
+// Configure multer to use Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'civic-connect',
+        allowed_formats: ['jpg', 'jpeg', 'png'],
+    },
+});
 
-const upload = multer({ storage: storage, fileFilter: fileFilter });
+const upload = multer({ storage: storage });
 
 // POST /api/upload
 router.post('/', upload.single('image'), (req, res) => {
@@ -39,11 +28,7 @@ router.post('/', upload.single('image'), (req, res) => {
         if (!req.file) {
             return res.status(400).json({ error: 'No image file provided' });
         }
-        
-        // The URL path to access the file from the frontend
-        const fileUrl = `/uploads/${req.file.filename}`;
-        
-        res.status(200).json({ url: fileUrl });
+        res.status(200).json({ url: req.file.path });
     } catch (error) {
         console.error('Upload Error:', error);
         res.status(500).json({ error: 'Failed to upload image' });
