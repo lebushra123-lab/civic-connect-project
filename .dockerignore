@@ -1,9 +1,0 @@
-node_modules
-.env
-uploads
-*.zip
-*.log
-debug_log.txt
-.git
-.gitignore
-README.md
