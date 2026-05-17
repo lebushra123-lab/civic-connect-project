@@ -31,7 +31,7 @@ export interface Notification {
 	createdAt: string;
 }
 
-const API_PREFIX = '/api';
+const API_PREFIX = `${process.env.REACT_APP_API_PREFIX || ''}/api`;
 
 function mapComplaint(doc: any): Complaint {
 	return {
