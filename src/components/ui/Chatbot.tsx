@@ -2,6 +2,9 @@ import React from 'react';
 import { Box, Paper, Typography, IconButton, TextField, Button } from '@mui/material';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import ReactMarkdown from 'react-markdown';
+
+const API_PREFIX = process.env.REACT_APP_API_PREFIX || '';
+
 const Chatbot: React.FC = () => {
 	const [open, setOpen] = React.useState(false);
 	const [messages, setMessages] = React.useState<{ sender: 'bot' | 'user'; text: string }[]>([
@@ -14,13 +17,11 @@ const Chatbot: React.FC = () => {
 		const userText = input.trim();
 		setMessages((m) => [...m, { sender: 'user', text: userText }]);
 		setInput('');
-		// call backend AI proxy
 		try {
 			setMessages((m) => [...m, { sender: 'bot', text: 'Typing...' }]);
-			const res = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: userText }), credentials: 'include' });
+			const res = await fetch(`${API_PREFIX}/api/ai/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: userText }), credentials: 'include' });
 			if (!res.ok) throw new Error(await res.text());
 			const json = await res.json();
-			// replace last bot message "Typing..." with real reply
 			setMessages((prev) => {
 				const copy = prev.slice(0, -1);
 				copy.push({ sender: 'bot', text: json.reply || 'Sorry, no response' });
@@ -48,12 +49,12 @@ const Chatbot: React.FC = () => {
 					<Box sx={{ p: 2, flex: 1, overflow: 'auto', display: 'grid', gap: 1 }}>
 						{messages.map((m, i) => (
 							<Box key={i} sx={{ display: 'flex', justifyContent: m.sender === 'user' ? 'flex-end' : 'flex-start' }}>
-								<Box sx={{ 
-									px: 1.5, 
-									py: 1, 
-									borderRadius: 2, 
-									bgcolor: m.sender === 'user' ? 'primary.main' : 'grey.100', 
-									color: m.sender === 'user' ? '#fff' : 'text.primary', 
+								<Box sx={{
+									px: 1.5,
+									py: 1,
+									borderRadius: 2,
+									bgcolor: m.sender === 'user' ? 'primary.main' : 'grey.100',
+									color: m.sender === 'user' ? '#fff' : 'text.primary',
 									maxWidth: '80%',
 									'& p': { m: 0, mb: 1 },
 									'& p:last-of-type': { mb: 0 },
